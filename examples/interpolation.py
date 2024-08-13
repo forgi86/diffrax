@@ -22,8 +22,8 @@ from diffrax._global_interpolation import AbstractGlobalInterpolation
 
 
 class ZOHInterpolation(AbstractGlobalInterpolation):
-    """Linearly interpolates some data `ys` over the interval $[t_0, t_1]$ with knots
-    at `ts`.
+    """Interpolates some data `ys` over the interval $[t_0, t_1]$ with knots
+    at `ts` with a piecewise constant.
 
     !!! warning
 
@@ -74,6 +74,7 @@ class ZOHInterpolation(AbstractGlobalInterpolation):
         t0: RealScalarLike,
         t1: Optional[RealScalarLike] = None,
         left: bool = False,
+        eps: RealScalarLike = 0.0
     ) -> PyTree[Array]:
         r"""Evaluate the linear interpolation.
 
@@ -110,7 +111,7 @@ class ZOHInterpolation(AbstractGlobalInterpolation):
 
         if t1 is not None:
             return self.evaluate(t1, left=left) - self.evaluate(t0, left=left)
-        index, fractional_part = self._interpret_t_zoh(t0, left)
+        index, fractional_part = self._interpret_t_zoh(t0+eps, left)
         # index = index +  (fractional_part >= 1.0)
 
         def _index(_ys):
